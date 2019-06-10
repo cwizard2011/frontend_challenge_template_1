@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { withToastManager } from 'react-toast-notifications';
 import Spinner from '../Spinner';
 import Navbar from '../Navbar';
@@ -14,31 +13,7 @@ export class UserProfile extends Component {
   }
 
   async componentDidMount() {
-    this.setState({ isLoading: true });
-    const { toastManager, history } = this.props;
-    const getUserObject = await localStorage.getItem('user');
-    const getCartID = await localStorage.getItem('cartId');
-    const parsedUser = JSON.parse(getUserObject);
-
-    try {
-      const retrievedUser = await axios.get('https://backendapi.turing.com/customer', {
-        headers: {
-          'USER-KEY': `${parsedUser.accessToken}`,
-          'Content-type': 'application/json'
-        }
-      });
-      if (!getCartID) {
-        this.setState({ productInCart: [] });
-      } else {
-        const cartItem = await axios.get(`https://backendapi.turing.com/shoppingcart/${getCartID}`);
-        const totalPrice = await axios.get(`https://backendapi.turing.com/shoppingcart/totalAmount/${getCartID}`)
-        this.setState({ productInCart: cartItem.data, total_price: totalPrice.data.total_amount });
-      }
-      this.setState({ userObj: retrievedUser.data, isLoading: false })
-    } catch (error) {
-      toastManager.add('Unable to retrieve user details', { appearance: 'error', autoDismiss: true });
-      history.push('/');
-    }
+    
   }
 
   render() {

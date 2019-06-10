@@ -1,6 +1,5 @@
 import React from 'react';
 import { Carousel, CarouselItem, CarouselControl, CarouselIndicators } from 'reactstrap';
-import axios from 'axios';
 import { withToastManager } from 'react-toast-notifications';
 import { Emojione } from 'react-emoji-render';
 import Cards from '../Cards';
@@ -10,7 +9,6 @@ import {
   getCartItems,
   getCartPrice,
   fetchProducts,
-  searchProducts
 } from '../utils/apiCalls';
 import Filters from '../Filters';
 import Paginate from 'react-paginate';
@@ -80,60 +78,31 @@ export class HomePage extends React.Component {
   }
 
   handlePageClick = data => {
-    const { selected } = data;
-    const { department_id, category_id } = this.state;
-    const currentPage = Math.ceil(selected) + 1;
-    if (Number(department_id) > 0) {
-      return this.fetchDepartments(department_id, currentPage);
-    }
-
-    if (Number(category_id) > 0) {
-      return this.fetchCategories(category_id, currentPage);
-    }
-    this.fetchProducts(currentPage);
-    this.setState({ page: currentPage })
+    
   }
 
   searchProducts = async (searchTerm) => {
-    const { page } = this.state;
-    this.setState({ searchTerm })
-    if (searchTerm.length === 0) {
-      this.setState({ isLoading: true })
-      const response = await fetchProducts(page);
-      this.setState({ products: response.data.rows, isLoading: false, pageCount: Math.ceil(response.data.count / 12), hasSearched: false, searchedProducts: [] })
-    } else {
-      this.setState({ isLoading: true })
-      const foundProducts = await searchProducts(searchTerm);
-      this.setState({ searchedProducts: foundProducts.data.rows, isLoading: false, pageCount: foundProducts.data.count > 12 ? Math.ceil(foundProducts.data.count / 12) : 1, products: [], hasSearched: true })
-    }
+    
   }
 
   setCategory = async (category_id) => {
-    this.setState({ page: 1, category_id, department: '' }, () => {
-      this.fetchCategories(category_id, this.state.page)
-    })
+    
   }
 
   setDepartment = async (value, department_id) => {
-    this.setState({ department: value, page: 1, department_id, category: '' }, () => {
-      this.fetchDepartments(department_id, this.state.page)
-    });
+    
   }
 
   setDepartmentFilter = (department_id) => {
-    this.setState({ page: 1, department_id, category: '' }, () => {
-      this.fetchDepartments(department_id, this.state.page)
-    });
+    
   }
 
   fetchCategories = async(category_id, page) => {
-    const response = await axios.get(`https://backendapi.turing.com/products/inCategory/${category_id}?page=${page}&limit=${12}`);
-    this.setState({ products: response.data.rows, pageCount: Math.ceil(response.data.count / 12) })
+    
   }
 
   fetchDepartments = async(department_id, page) => {
-    const response = await axios.get(`https://backendapi.turing.com/products/inDepartment/${department_id}?page=${page}&limit=${12}`);
-    this.setState({ products: response.data.rows, pageCount: Math.ceil(response.data.count / 12) })
+    
   }
 
   onExiting = () => {

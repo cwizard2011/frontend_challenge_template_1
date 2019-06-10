@@ -22,30 +22,19 @@ class NavbarComponent extends Component {
   }
 
   componentDidMount() {
-    const userData = localStorage.getItem('user');
-    if (!userData) {
-      return;
-    }
-    const parsedData = JSON.parse(userData);
-    this.setState({ customer: parsedData.customer, accessToken: parsedData.accessToken })
+   
   }
 
   toggle = () => {
-    this.setState({ isOpen: !this.state.isOpen })
+   
   }
 
   logOut = async() => {
-    const { history } = this.props;
-    await localStorage.clear();
-    if (history.location.pathname === '/') {
-      window.location.reload();
-    } else {
-      history.push('/')
-    }
+    
   }
 
   render() {
-    const { productIncart, cartPrice, searchProducts, searchTerm, history, setDepartment, department } = this.props;
+    const { productIncart, cartPrice, searchProducts, searchTerm, history } = this.props;
     const { accessToken, customer } = this.state;
     return (
       <div>

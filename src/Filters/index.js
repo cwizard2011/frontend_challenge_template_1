@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Collapse, FormGroup, Label, Input, Form } from 'reactstrap';
+import { Collapse, FormGroup, Form } from 'reactstrap';
 import RadioButton from '../RadioButton';
 import './styles.scss';
 
@@ -14,31 +14,20 @@ class Filter extends Component {
     collapseTextCategories: 'Filter by Categories'
   }
 
-  toggleCategory = (collapseText = 'Filter by Categories', categoryID = 0) => {
-    this.setState({
-      collapseCategory: !this.state.collapseCategory,
-      collapseTextCategories: collapseText
-    }, () => {
-      this.props.filterCategory(categoryID)
-    })
+  toggleCategory = () => {
+   
   }
 
   toggle = (name) => {
-    if (name === 'category') {
-      this.setState({ collapseCategory: !this.state.collapseCategory })
-    } else {
-      this.setState({ collapseDepartment: !this.state.collapseDepartment })
-    }
+
   }
 
-  toggleDepartment = (collapseText = 'Filter by Department', departmentID = 0) => {
-    this.setState({ collapseDepartment: !this.state.collapseDepartment, collapseTextDepartment: collapseText }, () => {
-      this.props.setDepartmentFilter(departmentID);
-    })
+  toggleDepartment = () => {
+    
   }
 
   render() {
-    const { collapseTextCategories, collapseCategory, collapseDepartment, collapseTextDepartment } = this.state;
+    const { collapseTextCategories, collapseTextDepartment } = this.state;
     const { searchedProducts, hasSearched } = this.props;
     return (
       <div className="filter-cards-container">

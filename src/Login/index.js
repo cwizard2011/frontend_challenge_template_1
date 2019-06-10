@@ -3,12 +3,10 @@
  * design, but ensure you use our predifined ID and classes
  */
 import React, { Component } from 'react';
-import axios from 'axios';
 import { Form, FormGroup, Label, Input } from 'reactstrap';
 import Navbar from '../Navbar';
 import { withToastManager } from 'react-toast-notifications';
 import FacebookLogin from 'react-facebook-login';
-import { validateSignin } from '../utils/validator';
 import '../utils/toastrconfig';
 import './style.scss';
 
@@ -25,16 +23,7 @@ export class Login extends Component {
   }
 
   async componentDidMount() {
-    const getCartID = await localStorage.getItem('cartId');
-    if (!getCartID) {
-      const cartID = await axios.get('https://backendapi.turing.com/shoppingcart/generateUniqueId');
-      localStorage.setItem('cartId', cartID.data.cart_id);
-      this.setState({ cart_id: cartID.data.cart_id })
-    } else {
-      const response = await axios.get(`https://backendapi.turing.com/shoppingcart/${getCartID}`);
-      const totalPrice = await axios.get(`https://backendapi.turing.com/shoppingcart/totalAmount/${getCartID}`);
-      this.setState({ cart_id: getCartID, productIncart: response.data, total_price: totalPrice.data.total_amount })
-    }
+   
   }
 
   setUserData = (event) => {
@@ -44,62 +33,13 @@ export class Login extends Component {
   }
 
   loginUser = async (event) => {
-    event.preventDefault();
-    this.setState({ disabledButton: true })
-    const { email, password } = this.state;
-    const { toastManager } = this.props;
-
-    const { errors, isValid } = validateSignin(email, password);
-
-    if (!isValid) {
-      return this.setState({ errors, disabledButton: false });
-    }
-
-    const { history } = this.props;
-    const data = { email, password };
-    try {
-      const response = await axios.post('https://backendapi.turing.com/customers/login', data);
-      const stringifyResponse = JSON.stringify(response.data);
-      localStorage.setItem('user', stringifyResponse);
-      this.setState({ disabledButton: false })
-      history.push('/');
-      toastManager.add('Login successful!', { appearance: 'success', autoDismiss: true });
-    } catch (error) {
-      if (error.response.data.error) {
-        toastManager.add(`${error.response.data.error.message}`, { appearance: 'error', autoDismiss: true } );
-        this.setState({ errors: {}, disabledButton: false })
-      } else {
-        toastManager.add('Unable to Login at this moment', { appearance: 'error', autoDismiss: true });
-        this.setState({ errors: {}, disabledButton: false })
-      }
-    }
+  
   }
 
   componentClicked = () => console.log('Clicked it')
 
   responseFacebook = async(response) => {
-    const { history, toastManager } = this.props;
-    const url = 'https://backendapi.turing.com/customers/facebook';
-    const options = {
-      url,
-      data: {
-        access_token: response.accessToken
-      },
-      method: 'POST',
-    }
-    try {
-      const loginFacebook = await axios(options);
-      const saveUserData = JSON.stringify(loginFacebook.data);
-      localStorage.setItem('user', saveUserData);
-      history.push('/');
-      toastManager.add('Login successful', { appearance: 'success', autoDismiss: true })
-    } catch (error) {
-      if (error.response.data.error) {
-        toastManager.add(`${error.response.data.error.message}`, { appearance: 'error', autoDismiss: true } );
-      } else {
-        toastManager.add('Unable to Log in to Facebook at this moment', { appearance: 'error', autoDismiss: true })
-      }
-    }
+    
   }
 
   render() {

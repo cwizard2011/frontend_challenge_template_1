@@ -5,7 +5,6 @@ import { Card, CardImg, CardBody,
 const Cards = ({
   product_id,
   name,
-  description,
   price,
   discounted_price,
   thumbnail,

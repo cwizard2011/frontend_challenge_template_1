@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import moment from 'moment';
 import Navbar from '../Navbar';
 import Spinner from '../Spinner';
@@ -17,39 +16,7 @@ class OrderConfirmation extends Component {
   }
 
   async componentDidMount() {
-    const { history } = this.props;
-    this.setState({ isLoading: true });
-    const getCartID = await localStorage.getItem('cartId');
-    const userDetails = await localStorage.getItem('user');
-    const orderId = await localStorage.getItem('orderId');
-    const address = await localStorage.getItem('address');
-    const parsedUserAddress = JSON.parse(userDetails);
-    if (!orderId) {
-      this.setState({ orderId: '' })
-    }
-    if (!userDetails) {
-      this.setState({ user: {} })
-    } else {
-      this.setState({ user: parsedUserAddress.customer })
-    }
-    try {
-      if (!getCartID) {
-        this.setState({ productInCart: [], isLoading: false });
-      } else {
-        const cartItem = await axios.get(`https://backendapi.turing.com/shoppingcart/${getCartID}`);
-        const totalPrice = await axios.get(`https://backendapi.turing.com/shoppingcart/totalAmount/${getCartID}`);
-        const orderDetail = await axios.get(`https://backendapi.turing.com/orders/shortDetail/${orderId}`, {
-          headers: {
-            'USER-KEY': `${parsedUserAddress.accessToken}`,
-            'Content-type': 'application/json'
-          }
-        });
-        this.setState({ productInCart: cartItem.data, total_price: totalPrice.data.total_amount, isLoading: false, orderDetails: orderDetail.data, address });
-      }
-    } catch (error) {
-      console.log('error', error);
-      history.push('/')
-    }
+
   }
 
   render() {
@@ -57,7 +24,6 @@ class OrderConfirmation extends Component {
       productInCart,
       total_price,
       isLoading,
-      user,
       address,
       orderDetails: {
         created_on,

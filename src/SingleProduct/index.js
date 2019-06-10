@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { Input, Modal, ModalBody, ModalHeader, ModalFooter } from 'reactstrap';
 import StarRatings from 'react-star-ratings';
 import { withToastManager } from 'react-toast-notifications';
@@ -32,130 +31,43 @@ export class SingleProduct extends Component {
   }
 
   async componentDidMount() {
-    this.setState({ isLoading: true })
-    const { match: { params: { id } } } = this.props;
-    const response = await axios.get(`https://backendapi.turing.com/products/${id}`);
-    const getUser = await localStorage.getItem('user');
-    if (!getUser) {
-      this.setState({ isUserLoggedIn: false });
-    } else {
-      this.setState({ isUserLoggedIn: true });
-    }
-    try {
-      const ratings = await axios.get(`https://backendapi.turing.com/products/${id}/reviews`);
-      let initialValue = 0;
-      const totalRating = ratings.data.reduce((acc, currentVal) => {
-        return acc + currentVal.rating;
-      }, initialValue);
-      const averageRating = ratings.data.length === 0 ? 0 : totalRating / ratings.data.length;
-      const convertToInteger = Number(averageRating).toFixed(1);
-      this.setState({ totalRating: convertToInteger, reviews: ratings.data })
-    } catch (error) {
-      console.error(error)
-    }
-    const getCartID = await localStorage.getItem('cartId');
-    if (!getCartID) {
-      const cartID = await axios.get('https://backendapi.turing.com/shoppingcart/generateUniqueId');
-      localStorage.setItem('cartId', cartID.data.cart_id);
-      this.setState({ cart_id: cartID.data.cart_id })
-    } else {
-      const response = await axios.get(`https://backendapi.turing.com/shoppingcart/${getCartID}`);
-      const totalPrice = await axios.get(`https://backendapi.turing.com/shoppingcart/totalAmount/${getCartID}`);
-      const namesOfItemsInCart = response.data.map(item => item.name);
-      this.setState({ cart_id: getCartID, productIncart: response.data, total_price: totalPrice.data.total_amount, itemsInCartName: namesOfItemsInCart })
-    }
-    this.setState({ product: response.data, thumbnail: response.data.thumbnail, isLoading: false })
+   
   }
 
   setSize = (size) => {
-    this.setState({ size });
+    
   }
 
   setQuantity = (type) => {
-    const { quantity } = this.state;
-    if (type === 'decrement' && quantity > 1) {
-      this.setState(prevState => ({
-        quantity: prevState.quantity - 1
-      }))
-    } else if (type === 'increment') {
-      this.setState(prevState => ({
-        quantity: prevState.quantity + 1
-      }))
-    }
+   
   }
 
   changeMainImage = (image) => {
-    this.setState({ thumbnail: image })
+   
   }
 
   setColor = (color) => {
-    this.setState({ color })
+    
   }
 
   addToCart = async () => {
-    this.setState({ disableButton: true })
-    const { cart_id, product, size, color, quantity } = this.state;
-    const { toastManager } = this.props;
-    const data = { cart_id, product_id: product.product_id, attributes: `${size}, ${color}` };
-    try {
-      const getCartID = await localStorage.getItem('cartId');
-      const shoppingCartItems = await axios.post('https://backendapi.turing.com/shoppingcart/add', data);
-      const lastItem = shoppingCartItems.data[shoppingCartItems.data.length - 1];
-      const updateData = { quantity };
-      const updateQuantity = await axios.put(`https://backendapi.turing.com/shoppingcart/update/${lastItem.item_id}`, updateData);
-      const totalPrice = await axios.get(`https://backendapi.turing.com/shoppingcart/totalAmount/${getCartID}`);
-      const namesOfItemsInCart = updateQuantity.data.map(item => item.name);
-      this.setState({ productIncart: updateQuantity.data, total_price: totalPrice.data.total_amount, isModalOpen: true, disableButton: false, itemsInCartName: namesOfItemsInCart })
-    } catch (error) {
-      toastManager.add('An error occurred', { appearance: 'error', autoDismiss: true })
-    }
+    
   }
 
   setRating = (newRating, name) => {
-    this.setState({ reviewRating: newRating })
+    
   }
 
   setReview = (event) => {
-    const inputValue = event.target.value;
-    this.setState({ reviewString: inputValue });
+   
   }
 
   setNickname = (event) => {
-    const inputValue = event.target.value;
-    this.setState({ nickname: inputValue })
+   
   }
 
   submitReview = async() => {
-    this.setState({ disableReviewButton: true })
-    const { match: { params: { id } }, toastManager } = this.props;
-    const { reviewString, reviewRating, reviews } = this.state;
-    const user = await localStorage.getItem('user');
-    const parsedUser = JSON.parse(user);
-    const data = { product_id: id, review: reviewString, rating: Number(reviewRating) };
-    try {
-      const url = `https://backendapi.turing.com/products/${id}/reviews`;
-      const options = {
-        method: 'POST',
-        url,
-        data,
-        headers: {
-          'USER-KEY': `${parsedUser.accessToken}`,
-          'Content-type': 'application/json'
-        }
-      }
-      await axios(options);
-      const newReviewData = {
-        name: parsedUser.customer.name,
-        review: reviewString,
-        rating: Number(reviewRating),
-        created_on: new Date()
-      }
-      toastManager.add('Review added successfully', { appearance: 'success' })
-      const newReviewsInState = [newReviewData, ...reviews];
-      this.setState({ reviews: newReviewsInState, reviewString: '', nickname: '', disableReviewButton: false });
-    } catch (error) {
-      toastManager.add('Error while adding review', { appearance: 'error', autoDismiss: true })
-    }
+    
   }
 
   toggleModalVisibility = (isModalOpen) => {

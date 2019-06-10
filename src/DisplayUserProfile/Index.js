@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input } from 'reactstrap';
 import axios from 'axios';
-import toastr from 'toastr';
 import Navbar from '../Navbar';
 import { withToastManager } from 'react-toast-notifications';
 import { validateProfile } from '../utils/validator';
@@ -25,101 +24,23 @@ export class DisplayUserProfile extends Component {
   }
 
   async componentDidMount() {
-    const getCartID = await localStorage.getItem('cartId');
-    const accessToken = await localStorage.getItem('user');
-    const parsedAccessToken = JSON.parse(accessToken);
-    try {
-      const retrieveUser = await axios.get('https://backendapi.turing.com/customer', {
-        headers: {
-          'USER-KEY': `${parsedAccessToken.accessToken}`,
-          'Content-type': 'application/json'
-        }
-      });
-      const regionsData = await axios.get('https://backendapi.turing.com/shipping/regions');
-      this.setState({ userObj: retrieveUser.data, regions: regionsData.data })
-    } catch (error) {
-      console.log('what is error', error.response)
-    }
-    if (!getCartID) {
-      this.setState({ productInCart: [] })
-    } else {
-      const cartItem = await axios.get(`https://backendapi.turing.com/shoppingcart/${getCartID}`);
-      const totalPrice = await axios.get(`https://backendapi.turing.com/shoppingcart/totalAmount/${getCartID}`)
-      this.setState({ productInCart: cartItem.data, total_price: totalPrice.data.total_amount });
-    }
+
   }
 
   updateUserValue = (event) => {
-    const { userObj } = this.state;
-    const userFieldName = event.target.name;
-    const newUser = { ...userObj, [userFieldName]: event.target.value }
-    this.setState({ userObj: newUser })
+   
   }
 
   setRegionAndRegionID = (event) => {
-    const { userObj } = this.state;
-    const regionValue = REGIONS[event.target.value];
-    const newUser = { ...userObj, region: regionValue, shipping_region_id: Number(event.target.value) };
-    this.setState({ userObj: newUser, regionId: event.target.value })
+    
   }
 
   updateUserProfile = async() => {
-    this.setState({ disableButton: true })
-    const { userObj: {
-      address_1,
-      address_2,
-      city,
-      region,
-      postal_code,
-      country,
-    shipping_region_id } } = this.state;
-      const dataToValidate = {
-        address_1,
-        address_2,
-        city,
-        region,
-        postal_code,
-        country,
-      }
-    const { toastManager, history } = this.props;
-    const { errors, isValid } = validateProfile(dataToValidate);
-
-    if (!isValid) {
-      return this.setState({ errors, disableButton: false })
-    }
-
-    const accessToken = await localStorage.getItem('user');
-    const parsedAccessToken = JSON.parse(accessToken);
-    console.log('parsed token', parsedAccessToken)
-    const data = { address_1, address_2, city, region, postal_code, country, shipping_region_id };
-    try {
-      const url = 'https://backendapi.turing.com/customers/address';
-      const options = {
-        method: 'PUT',
-        headers: {
-          'USER-KEY': `${parsedAccessToken.accessToken}`,
-          'Content-type': 'application/json'
-        },
-        data: data,
-        url,
-      };
-      const updatedUser = await axios(options);
-      localStorage.setItem('userData', JSON.stringify(updatedUser.data))
-      this.setState({ userObj: {}, errors: {}, disableButton: false });
-      toastManager.add('Update successful', { appearance: 'success', autoDismiss: true });
-      history.push('/user')
-    } catch (error) {
-      this.setState({ disableButton: false, errors: {} })
-      if (error.response.data.error) {
-        toastManager.add(`${error.response.data.error.message}`, { appearance: 'error', autoDismiss: true } );
-      } else {
-        toastManager.add('Unable to update your profile at this moment', { appearance: 'error', autoDismiss: true })
-      }
-    }
+  
   }
 
   render() {
-    const { productInCart, total_price, regions, userObj, regionId, errors, disableButton } = this.state;
+    const { productInCart, total_price, regions, userObj, errors, disableButton } = this.state;
     const { history } = this.props;
     return (
       <div>
